@@ -10,6 +10,9 @@ const info = {
   tiktok: 'https://www.tiktok.com/@dandy_cuts',
   instagram: '#',
   web: 'https://dandy-cuts.vercel.app', // ← finální doména
+  // Odkaz na rezervace v Noona (např. https://noona.app/dandycuts).
+  // Když je prázdný (''), zobrazí se místo toho formulář do mailu.
+  noona: 'https://noona.app/',
 };
 
 const otevreno = [
@@ -110,8 +113,19 @@ const pocetSlotu = 6;
       <div class="head">
         <p class="eyebrow">Online</p>
         <h2>Rezervace</h2>
-        <p class="muted">Vyber službu a termín. Ozveme se a potvrdíme.</p>
+        <p class="muted">{info.noona ? 'Vyber si službu a volný termín. Obsazené časy se nezobrazují.' : 'Vyber službu a termín. Ozveme se a potvrdíme.'}</p>
       </div>
+      {info.noona ? (
+      <div class="book">
+        <ol class="book-steps">
+          <li><span>1</span>Vyber službu</li>
+          <li><span>2</span>Vyber volný termín</li>
+          <li><span>3</span>Potvrzení ti přijde do mailu</li>
+        </ol>
+        <a href={info.noona} class="btn book-btn" target="_blank" rel="noopener">Rezervovat termín</a>
+        <p class="muted small">Rezervace přes Noona. Nebo zavolej: <a href={`tel:${info.telefon.replace(/\s/g, '')}`}>{info.telefon}</a></p>
+      </div>
+      ) : (
       <form class="form" action={`https://formsubmit.co/${info.email}`} method="POST">
         <input type="hidden" name="_subject" value={`Nová rezervace – ${info.nazev}`} />
         <input type="hidden" name="_template" value="table" />
@@ -142,6 +156,7 @@ const pocetSlotu = 6;
         <label>Poznámka<textarea name="Poznámka" rows="3" placeholder="Např. fade do kůže, nahoře nechat délku…"></textarea></label>
         <button class="btn" type="submit">Odeslat rezervaci</button>
       </form>
+      )}
     </div>
   </section>
 
@@ -237,6 +252,14 @@ const pocetSlotu = 6;
   .form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--gold)}
   .form .btn{margin-top:8px;width:100%;padding:18px}
   .hp{display:none}
+  .book{display:grid;gap:28px}
+  .book-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .book-steps li{border:1px solid var(--line);background:var(--bg2);padding:20px 16px;display:grid;gap:10px;font-size:.9rem}
+  .book-steps span{font-family:var(--display);color:var(--gold);font-size:1.6rem;line-height:1}
+  .book-btn{width:100%;text-align:center;padding:20px;font-size:.9rem}
+  .small{font-size:.85rem;text-align:center;margin:0}
+  .small a{color:var(--gold);text-decoration:none}
+  @media (max-width:720px){.book-steps{grid-template-columns:1fr}}
 
   .contact{display:grid;grid-template-columns:1fr 1fr;gap:64px}
   .contact h2{font-size:clamp(2.5rem,7vw,4rem);margin-bottom:28px}
