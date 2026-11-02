@@ -1,0 +1,262 @@
+---
+// ============ ÚPRAVY TADY ============
+const info = {
+  nazev: 'Dandy Cuts',
+  slogan: 'Fade. Střih. Vousy. Bez kompromisů.',
+  email: 'REZERVACE@EMAIL.CZ', // ← sem mail barbera, rezervace chodí sem
+  telefon: '+420 777 000 000',
+  adresa: 'Ulice 123, 500 02 Hradec Králové',
+  mapa: 'https://maps.google.com/?q=Hradec+Kr%C3%A1lov%C3%A9',
+  tiktok: 'https://www.tiktok.com/@dandy_cuts',
+  instagram: '#',
+  web: 'https://dandy-cuts.vercel.app', // ← finální doména
+};
+
+const otevreno = [
+  ['Po – Pá', '9:00 – 19:00'],
+  ['Sobota', '9:00 – 14:00'],
+  ['Neděle', 'Zavřeno'],
+];
+
+const cenik = [
+  { nazev: 'Pánský střih', popis: 'Konzultace, střih, mytí, styling', cena: 450, cas: '45 min' },
+  { nazev: 'Skin fade', popis: 'Přechod do kůže, detailní práce', cena: 500, cas: '50 min' },
+  { nazev: 'Úprava vousů', popis: 'Tvarování, kontury, horký ručník', cena: 300, cas: '30 min' },
+  { nazev: 'Střih + vousy', popis: 'Kompletní servis', cena: 700, cas: '75 min' },
+  { nazev: 'Dětský střih', popis: 'Do 12 let', cena: 300, cas: '30 min' },
+  { nazev: 'Strojek na jednu délku', popis: 'Rychlovka', cena: 250, cas: '20 min' },
+];
+
+// Fotky: nahraj do public/img/ a napiš sem názvy, např. '/img/1.jpg'
+const fotky: string[] = [];
+const pocetSlotu = 6;
+// =====================================
+---
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{info.nazev} | Barber {info.adresa.split(',').pop()?.trim()}</title>
+  <meta name="description" content={`${info.nazev} – barber. Fade, střih, úprava vousů. Rezervace online.`} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="nav">
+    <a href="#" class="logo">{info.nazev}</a>
+    <nav>
+      <a href="#cenik">Ceník</a>
+      <a href="#prace">Práce</a>
+      <a href="#kontakt">Kontakt</a>
+      <a href="#rezervace" class="btn btn-sm">Rezervace</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Barbershop</p>
+      <h1>{info.nazev}</h1>
+      <p class="lead">{info.slogan}</p>
+      <div class="hero-cta">
+        <a href="#rezervace" class="btn">Objednat se</a>
+        <a href="#cenik" class="btn btn-ghost">Ceník</a>
+      </div>
+    </div>
+    <div class="stripe" aria-hidden="true"></div>
+  </section>
+
+  <section id="cenik" class="section">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Služby</p>
+        <h2>Ceník</h2>
+      </div>
+      <ul class="price-list">
+        {cenik.map((s) => (
+          <li>
+            <div class="pl-top">
+              <span class="pl-name">{s.nazev}</span>
+              <span class="pl-dots" aria-hidden="true"></span>
+              <span class="pl-price">{s.cena} Kč</span>
+            </div>
+            <div class="pl-sub"><span>{s.popis}</span><span>{s.cas}</span></div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section id="prace" class="section alt">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Portfolio</p>
+        <h2>Naše práce</h2>
+      </div>
+      <div class="gallery">
+        {fotky.length
+          ? fotky.map((f) => <img src={f} alt={`Střih ${info.nazev}`} loading="lazy" />)
+          : Array.from({ length: pocetSlotu }).map((_, i) => (
+              <div class="ph"><span>Foto {i + 1}</span></div>
+            ))}
+      </div>
+      <p class="more">Víc na <a href={info.tiktok} target="_blank" rel="noopener">TikToku</a></p>
+    </div>
+  </section>
+
+  <section id="rezervace" class="section">
+    <div class="wrap narrow">
+      <div class="head">
+        <p class="eyebrow">Online</p>
+        <h2>Rezervace</h2>
+        <p class="muted">Vyber službu a termín. Ozveme se a potvrdíme.</p>
+      </div>
+      <form class="form" action={`https://formsubmit.co/${info.email}`} method="POST">
+        <input type="hidden" name="_subject" value={`Nová rezervace – ${info.nazev}`} />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_next" value={`${info.web}/dekujeme`} />
+        <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" />
+
+        <div class="row">
+          <label>Jméno<input name="Jméno" required autocomplete="name" /></label>
+          <label>Telefon<input name="Telefon" type="tel" required autocomplete="tel" /></label>
+        </div>
+        <label>E-mail<input name="email" type="email" autocomplete="email" /></label>
+        <label>Služba
+          <select name="Služba" required>
+            <option value="">Vyber…</option>
+            {cenik.map((s) => <option>{s.nazev} – {s.cena} Kč</option>)}
+          </select>
+        </label>
+        <div class="row">
+          <label>Den<input name="Datum" type="date" required id="datum" /></label>
+          <label>Čas
+            <select name="Čas" required>
+              <option value="">Vyber…</option>
+              {['9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'].map((t) => <option>{t}</option>)}
+            </select>
+          </label>
+        </div>
+        <label>Poznámka<textarea name="Poznámka" rows="3" placeholder="Např. fade do kůže, nahoře nechat délku…"></textarea></label>
+        <button class="btn" type="submit">Odeslat rezervaci</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="kontakt" class="section alt">
+    <div class="wrap contact">
+      <div>
+        <p class="eyebrow">Kde nás najdeš</p>
+        <h2>Kontakt</h2>
+        <p class="big"><a href={`tel:${info.telefon.replace(/\s/g, '')}`}>{info.telefon}</a></p>
+        <p><a href={`mailto:${info.email}`}>{info.email}</a></p>
+        <p><a href={info.mapa} target="_blank" rel="noopener">{info.adresa}</a></p>
+        <div class="social">
+          <a href={info.tiktok} target="_blank" rel="noopener">TikTok</a>
+          <a href={info.instagram} target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">Otevírací doba</p>
+        <ul class="hours">
+          {otevreno.map(([d, h]) => <li><span>{d}</span><span>{h}</span></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">© {new Date().getFullYear()} {info.nazev}</footer>
+
+  <script>
+    const d = document.getElementById('datum') as HTMLInputElement | null;
+    if (d) d.min = new Date().toISOString().split('T')[0];
+  </script>
+</body>
+</html>
+
+<style is:global>
+  :root{
+    --bg:#0c0b0a; --bg2:#151311; --line:#2a2622; --text:#ece6dc; --muted:#a39b8f; --gold:#c9a467;
+    --display:'Oswald',sans-serif; --body:'Inter',sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  h1,h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;line-height:1;margin:0}
+  .eyebrow{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+  .muted{color:var(--muted)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  .narrow{max-width:640px}
+  .section{padding:96px 0}
+  .section.alt{background:var(--bg2)}
+  .head{margin-bottom:48px}
+  .head h2{font-size:clamp(2.5rem,7vw,4rem)}
+
+  .btn{display:inline-block;padding:15px 30px;background:var(--gold);color:var(--bg);font-weight:600;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;font-size:.8rem;border:1px solid var(--gold);cursor:pointer;font-family:var(--body);transition:background .2s,color .2s}
+  .btn:hover{background:transparent;color:var(--gold)}
+  .btn-ghost{background:transparent;color:var(--text);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--gold)}
+  .btn-sm{padding:9px 16px;font-size:.7rem}
+
+  .nav{position:fixed;inset:0 0 auto;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:rgba(12,11,10,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .logo{font-family:var(--display);font-weight:700;text-transform:uppercase;text-decoration:none;letter-spacing:.06em;font-size:1.2rem}
+  .nav nav{display:flex;gap:22px;align-items:center}
+  .nav nav a:not(.btn){text-decoration:none;font-size:.85rem;color:var(--muted)}
+  .nav nav a:not(.btn):hover{color:var(--text)}
+
+  .hero{min-height:100svh;display:flex;align-items:center;position:relative;overflow:hidden;
+    background:radial-gradient(ellipse at 70% 30%,#2a2219 0%,transparent 60%),var(--bg)}
+  .hero-inner{max-width:1080px;margin:0 auto;padding:120px 20px 80px;width:100%;position:relative;z-index:1}
+  .hero h1{font-size:clamp(4rem,16vw,11rem);font-weight:700}
+  .lead{font-size:clamp(1.05rem,2.5vw,1.3rem);color:var(--muted);margin:20px 0 36px;max-width:480px}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+  .stripe{position:absolute;right:-60px;top:0;bottom:0;width:180px;opacity:.12;transform:skewX(-12deg);
+    background:repeating-linear-gradient(180deg,var(--gold) 0 26px,transparent 26px 52px)}
+
+  .price-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:4px 64px}
+  .price-list li{padding:20px 0;border-bottom:1px solid var(--line)}
+  .pl-top{display:flex;align-items:baseline;gap:12px}
+  .pl-name{font-family:var(--display);text-transform:uppercase;font-size:1.25rem;letter-spacing:.03em}
+  .pl-dots{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-5px)}
+  .pl-price{font-family:var(--display);color:var(--gold);font-size:1.25rem;white-space:nowrap}
+  .pl-sub{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.85rem;margin-top:4px}
+
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .gallery img,.ph{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+  .ph{background:linear-gradient(135deg,#1d1a17,#24201b);border:1px solid var(--line);display:grid;place-items:center;color:#4a443d;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase}
+  .more{margin-top:24px;color:var(--muted)}
+  .more a{color:var(--gold)}
+
+  .form{display:grid;gap:18px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .form label{display:grid;gap:8px;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+  .form input,.form select,.form textarea{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--text);padding:14px;font:inherit;font-size:1rem;letter-spacing:0;text-transform:none;border-radius:0;color-scheme:dark}
+  .form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--gold)}
+  .form .btn{margin-top:8px;width:100%;padding:18px}
+  .hp{display:none}
+
+  .contact{display:grid;grid-template-columns:1fr 1fr;gap:64px}
+  .contact h2{font-size:clamp(2.5rem,7vw,4rem);margin-bottom:28px}
+  .contact p{margin:0 0 8px}
+  .contact a{text-decoration:none}
+  .contact a:hover{color:var(--gold)}
+  .big{font-family:var(--display);font-size:1.8rem}
+  .social{display:flex;gap:20px;margin-top:24px;font-size:.8rem;text-transform:uppercase;letter-spacing:.15em;color:var(--gold)}
+  .hours{list-style:none;padding:0;margin:0}
+  .hours li{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line)}
+  .hours li span:last-child{color:var(--muted)}
+
+  .foot{text-align:center;padding:32px 20px;color:#5a534a;font-size:.8rem;border-top:1px solid var(--line)}
+
+  @media (max-width:720px){
+    .nav nav a:not(.btn){display:none}
+    .section{padding:72px 0}
+    .gallery{grid-template-columns:repeat(2,1fr)}
+    .row,.contact{grid-template-columns:1fr}
+    .contact{gap:40px}
+    .stripe{width:90px;right:-40px}
+  }
+</style>
